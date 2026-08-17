@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# training artifacts (weights, metrics, scalers)
+/artifacts/
+
+# local-only dissertation source — keep out of public repo
+/hwu_cs_dissertation_*.docx
