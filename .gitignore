@@ -50,3 +50,8 @@ __pycache__/
 
 # local-only dissertation source — keep out of public repo
 /hwu_cs_dissertation_*.docx
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
