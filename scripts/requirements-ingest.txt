@@ -1,0 +1,8 @@
+# Minimal deps for the daily ingest cron (GitHub Actions runner).
+# Pinned to the versions used locally during development on 2026-11-09.
+# Keep this file lean — unrelated training/eval deps live in requirements.txt.
+yfinance==1.7.0
+pandas==2.3.3
+vaderSentiment==3.3.2
+requests==2.34.2
+feedparser==6.0.14

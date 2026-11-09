@@ -45,8 +45,8 @@ def evaluate_one(model_key: str, seed: int) -> dict:
     w = prepare(model_key)
     y_pred_scaled = model.predict(w.X_test, verbose=0).flatten()
 
-    actual = inverse_price(w.y_test, scaler)
-    predicted = inverse_price(y_pred_scaled, scaler)
+    actual = inverse_price(w.y_test, scaler, cols_to_scale=w.cols_to_scale)
+    predicted = inverse_price(y_pred_scaled, scaler, cols_to_scale=w.cols_to_scale)
 
     errors = actual - predicted
     abs_errors = np.abs(errors)
@@ -114,7 +114,11 @@ def print_ttests(results: list[dict]) -> list[dict]:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--model", choices=["A", "B", "C", "all"], default="all")
+    p.add_argument(
+        "--model",
+        choices=["A", "B", "C", "B2", "D", "E", "all", "phase2"],
+        default="all",
+    )
     p.add_argument("--seed", type=int, default=DEFAULT_SEED)
     return p.parse_args(argv)
 
@@ -123,7 +127,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     set_global_seed(args.seed)  # deterministic dropout at predict time
 
-    keys = ["A", "B", "C"] if args.model == "all" else [args.model]
+    if args.model == "all":
+        keys = ["A", "B", "C"]
+    elif args.model == "phase2":
+        keys = ["D", "E"]
+    else:
+        keys = [args.model]
     results = [evaluate_one(k, args.seed) for k in keys]
     print_table(results)
 

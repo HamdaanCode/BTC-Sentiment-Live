@@ -4,27 +4,33 @@ import {
   TweetVolumeChart,
 } from "./DissertationCharts";
 import { dissertationData } from "./dissertationData";
+import latestBtc from "../data/daily/latest_btc.json";
+import latestReddit from "../data/daily/latest_reddit.json";
 
 const totalTweets = dissertationData.reduce((s, d) => s + d.tweetCount, 0);
 const dateRange = `${dissertationData[0].date} → ${
   dissertationData[dissertationData.length - 1].date
 }`;
 
+const formatUsd = (n: number) =>
+  `$${n.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+
+const sentimentLabel = (compound: number) =>
+  compound >= 0.05 ? "Positive" : compound <= -0.05 ? "Negative" : "Neutral";
+
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-16 sm:py-24">
       <header className="mb-16">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-          BSc Dissertation · Heriot-Watt · First Class (84%)
-        </div>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           Machine learning for Bitcoin price prediction
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-          Three LSTM models forecasting daily Bitcoin close across the Sept–Nov
-          2021 all-time high, using tweet-derived sentiment as an input feature.
-          Compared a baseline VADER against a custom 35-term crypto lexicon and
-          an intensity-weighted variant.
+          An ongoing personal project. Three LSTM models forecasting daily
+          Bitcoin close across the Sept–Nov 2021 all-time high, using
+          tweet-derived sentiment as an input feature. Baseline VADER compared
+          against a custom 35-term crypto lexicon and an intensity-weighted
+          variant. Now being extended into a live pipeline for 2026 markets.
         </p>
         <div className="mt-8 flex flex-wrap gap-3 text-sm">
           <a
@@ -47,7 +53,7 @@ export default function Home() {
       <section className="mb-20">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            The dissertation, in numbers
+            The research, in numbers
           </h2>
           <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
             Three LSTM variants trained on daily Bitcoin data plus tweet-derived
@@ -108,12 +114,72 @@ export default function Home() {
             Taking it live in 2026
           </h2>
           <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
-            The dissertation asked{" "}
+            Phase 1 asked{" "}
             <em>does sentiment help predict Bitcoin price?</em> Phase 2 asks the
-            harder question: <em>does a 2021-trained pipeline still work on
-            2026 markets</em>, and does swapping VADER for a transformer close
-            the limitations named in the write-up?
+            harder questions: <em>does the pipeline generalise across market
+            regimes</em>, and <em>does sentiment from a different community
+            still carry signal in a post-ETF market?</em>
           </p>
+        </div>
+
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Research design
+          </h3>
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            VADER with my crypto lexicon stays fixed as the sentiment method
+            across Phase 2 so time-period and source variables stay isolated.
+            A transformer ablation (FinBERT or CryptoBERT) is deferred.
+          </p>
+        </div>
+        <ul className="mb-10 space-y-3">
+          <ExperimentRow
+            id="A"
+            title="Time regime generalisation"
+            varies="Time period (2021 Sept–Nov vs 2022 bear market)"
+            controls="Sentiment method (VADER + crypto lexicon), source (Twitter)"
+            question="Does my pipeline still work when the market mood flips?"
+          />
+          <ExperimentRow
+            id="B"
+            title="Live 2026 Reddit pipeline"
+            varies="Source (Reddit instead of Twitter), time period (post-ETF)"
+            controls="Sentiment method (VADER + crypto lexicon)"
+            question="Does sentiment from a different community carry signal in a post-ETF market?"
+          />
+        </ul>
+
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Today&apos;s signals
+          </h3>
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            Daily BTC close and r/Bitcoin sentiment pulled fresh every day via a
+            GitHub Actions cron. BTC series begins on the spot ETF approval day
+            (10 Jan 2024); the Reddit series starts from the first cron run.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Metric
+            label="BTC close"
+            value={formatUsd(latestBtc.close)}
+            caption={latestBtc.date}
+          />
+          <Metric
+            label="r/Bitcoin"
+            value={sentimentLabel(latestReddit.avg_compound)}
+            caption={`compound ${latestReddit.avg_compound.toFixed(3)}`}
+          />
+          <Metric
+            label="Posts scored"
+            value={String(latestReddit.posts_scored)}
+            caption={`${latestReddit.posts_with_selftext} with selftext`}
+          />
+          <Metric
+            label="BTC rows"
+            value={String(latestBtc.rows_total)}
+            caption={`since ${latestBtc.backfill_start}`}
+          />
         </div>
 
         <div className="mb-4">
@@ -121,8 +187,8 @@ export default function Home() {
             Reproduced baseline (seed=42)
           </h3>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            The dissertation pipeline now runs end-to-end from a clean venv.
-            These are the numbers FinBERT has to beat.
+            The 2021 pipeline now runs end-to-end from a clean venv.
+            These are the numbers the 2022 extension has to match (or not).
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -138,18 +204,18 @@ export default function Home() {
 
         <div className="mt-12 mb-4">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Dissertation limitations → Phase 2 deliverables
+            Known limitations → Phase 2 deliverables
           </h3>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Every limitation named in the write-up mapped to what closes it.
+            Every limitation surfaced in Phase 1 mapped to what closes it.
           </p>
         </div>
         <ul className="space-y-3">
           <LimitationRow
             id="L1"
-            status="active"
+            status="planned"
             title="VADER is rule-based, misses context"
-            deliverable="Swap in FinBERT (Prosus) as the headline 2026 sentiment model. Benchmark CryptoBERT alongside in the ablation table; promote whichever wins."
+            deliverable="Transformer ablation (FinBERT or CryptoBERT) deferred as future work. VADER + crypto lexicon remains the fixed sentiment method across Phase 2 so time-period and source variables can be isolated cleanly."
           />
           <LimitationRow
             id="L2"
@@ -159,9 +225,9 @@ export default function Home() {
           />
           <LimitationRow
             id="L3"
-            status="planned"
+            status="active"
             title="Twitter-only sentiment source"
-            deliverable="Add Reddit ingest (r/Bitcoin, r/CryptoCurrency) via the daily pipeline. On-chain metrics slated after."
+            deliverable="Reddit ingest live: daily pull of top 25 r/Bitcoin posts, VADER-scored title + selftext, aggregated into a daily compound score. On-chain metrics slated after."
           />
           <LimitationRow
             id="L4"
@@ -184,9 +250,9 @@ export default function Home() {
         </div>
         <ul className="space-y-2 text-sm">
           <StatusRow status="done" label="Environment: pyenv + Python 3.12 + reproducible .venv" />
-          <StatusRow status="done" label="Training pipeline reproduces dissertation baseline end-to-end" />
-          <StatusRow status="active" label="L1 · FinBERT sentiment module" />
-          <StatusRow status="planned" label="Daily ingest cron (Reddit + BTC price)" />
+          <StatusRow status="done" label="Training pipeline reproduces the 2021 baseline end-to-end" />
+          <StatusRow status="done" label="Daily ingest cron (BTC price + r/Bitcoin sentiment)" />
+          <StatusRow status="active" label="L2 · 2022 bear market retrain (VADER + crypto lexicon)" />
           <StatusRow status="planned" label="Live inference + rolling accuracy on this page" />
         </ul>
       </section>
@@ -207,6 +273,51 @@ const STATUS_LABEL: Record<Status, string> = {
   active: "In progress",
   planned: "Planned",
 };
+
+function ExperimentRow({
+  id,
+  title,
+  varies,
+  controls,
+  question,
+}: {
+  id: string;
+  title: string;
+  varies: string;
+  controls: string;
+  question: string;
+}) {
+  return (
+    <li className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+          Experiment {id}
+        </span>
+        <span className="text-sm font-medium">{title}</span>
+      </div>
+      <dl className="mt-2 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="flex gap-2">
+          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
+            varies
+          </dt>
+          <dd>{varies}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
+            controls
+          </dt>
+          <dd>{controls}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
+            asks
+          </dt>
+          <dd className="italic">{question}</dd>
+        </div>
+      </dl>
+    </li>
+  );
+}
 
 function LimitationRow({
   id,

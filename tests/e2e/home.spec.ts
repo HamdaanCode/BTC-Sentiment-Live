@@ -5,10 +5,12 @@ test.describe("Homepage — landing content", () => {
     await page.goto("/");
   });
 
-  test("renders the page title and dissertation badge", async ({ page }) => {
-    await expect(page).toHaveTitle(/bitcoin|dissertation|hamdaan/i);
+  test("renders the page title and personal-project framing", async ({ page }) => {
+    await expect(page).toHaveTitle(/bitcoin|hamdaan/i);
+    // The dissertation badge was removed in Nov 2026; the opening paragraph
+    // now leads with the "ongoing personal project" framing instead.
     await expect(
-      page.getByText(/BSc Dissertation.*Heriot-Watt.*First Class/i)
+      page.getByText(/ongoing personal project/i)
     ).toBeVisible();
   });
 
@@ -50,5 +52,41 @@ test.describe("Homepage — landing content", () => {
     await expect(
       page.getByRole("heading", { name: /taking it live in 2026/i })
     ).toBeInViewport();
+  });
+
+  test("Research design block renders both experiments", async ({ page }) => {
+    await expect(
+      page.getByRole("heading", { name: /research design/i })
+    ).toBeVisible();
+    await expect(page.getByText(/Experiment A/i)).toBeVisible();
+    await expect(page.getByText(/time regime generalisation/i)).toBeVisible();
+    await expect(page.getByText(/Experiment B/i)).toBeVisible();
+    await expect(page.getByText(/live 2026 Reddit pipeline/i)).toBeVisible();
+  });
+
+  test("Today's signals block renders four live metric tiles", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByRole("heading", { name: /today.*signals/i })
+    ).toBeVisible();
+    // Metric labels — values come from the daily ingest JSON so we don't
+    // assert specific numbers (they change daily), only that each tile is
+    // present with its label.
+    await expect(page.getByText("BTC close", { exact: true })).toBeVisible();
+    await expect(page.getByText("r/Bitcoin", { exact: true })).toBeVisible();
+    await expect(page.getByText("Posts scored", { exact: true })).toBeVisible();
+    await expect(page.getByText("BTC rows", { exact: true })).toBeVisible();
+  });
+
+  test("L1 and L3 rows reflect the Nov 2026 reframe", async ({ page }) => {
+    // L1 was flipped from "In progress" to "Planned" (deferred) wording.
+    await expect(
+      page.getByText(/transformer ablation.*deferred as future work/i)
+    ).toBeVisible();
+    // L3 description now mentions the live Reddit ingest.
+    await expect(
+      page.getByText(/Reddit ingest live/i)
+    ).toBeVisible();
   });
 });

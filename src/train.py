@@ -27,8 +27,17 @@ from src.config import (
     EARLY_STOP_PATIENCE,
     EPOCHS,
     FEATURES_BY_MODEL,
+    FEATURES_BY_MODEL_PHASE2,
     set_global_seed,
 )
+
+
+def _features_for(model_key: str) -> list[str]:
+    if model_key in FEATURES_BY_MODEL:
+        return FEATURES_BY_MODEL[model_key]
+    if model_key in FEATURES_BY_MODEL_PHASE2:
+        return FEATURES_BY_MODEL_PHASE2[model_key]
+    raise ValueError(f"unknown model {model_key!r}")
 
 
 def train_one(model_key: str, seed: int, epochs: int, batch_size: int, patience: int) -> dict:
@@ -41,7 +50,7 @@ def train_one(model_key: str, seed: int, epochs: int, batch_size: int, patience:
     from src.model import build_lstm
 
     w = prepare(model_key)
-    features = FEATURES_BY_MODEL[model_key]
+    features = _features_for(model_key)
     model = build_lstm(n_features=len(features), name=f"LSTM_{model_key}")
 
     history = model.fit(
@@ -86,7 +95,12 @@ def train_one(model_key: str, seed: int, epochs: int, batch_size: int, patience:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--model", choices=["A", "B", "C", "all"], default="all")
+    p.add_argument(
+        "--model",
+        choices=["A", "B", "C", "B2", "D", "E", "all", "phase2"],
+        default="all",
+        help="'all' = A/B/C (dissertation baseline); 'phase2' = D/E (FinBERT); B2 = VADER on 2022 bear-market data",
+    )
     p.add_argument("--seed", type=int, default=DEFAULT_SEED)
     p.add_argument("--epochs", type=int, default=EPOCHS)
     p.add_argument("--batch-size", type=int, default=BATCH_SIZE)
@@ -96,7 +110,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    keys = ["A", "B", "C"] if args.model == "all" else [args.model]
+    if args.model == "all":
+        keys = ["A", "B", "C"]
+    elif args.model == "phase2":
+        keys = ["D", "E"]
+    else:
+        keys = [args.model]
 
     results = []
     for k in keys:

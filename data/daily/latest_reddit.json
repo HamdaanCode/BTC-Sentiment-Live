@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-09",
+  "subreddit": "Bitcoin",
+  "posts_scored": 25,
+  "posts_with_selftext": 22,
+  "avg_compound": 0.1868,
+  "pos_count": 16,
+  "neu_count": 3,
+  "neg_count": 6,
+  "top_post_title": "Same",
+  "rows_total": 1,
+  "generated_at": "2026-11-09T18:38:54+00:00",
+  "recent": [
+    {
+      "date": "2026-11-09",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 22,
+      "avg_compound": 0.1868,
+      "avg_pos": 0.0892,
+      "avg_neu": 0.8494,
+      "avg_neg": 0.0615,
+      "pos_count": 16,
+      "neu_count": 3,
+      "neg_count": 6,
+      "top_post_title": "Same"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 Rolling status doc. Updated as work is completed. Newest at top of each section.
 
-Last updated: 2026-08-17 (3c complete — Phase 2 reproducible pipeline done)
+Last updated: 2026-11-09 (daily ingest cron live, VADER port, Phase 2 reframed)
 
 ## Environment
 
@@ -38,9 +38,15 @@ Anchored to the dissertation's Phase 2 goals and the L1–L5 limitations named i
 - [x] **3c — Evaluate + plots** (done 2026-08-17)
   - `src/evaluate.py` — loads `model.keras` + `scaler.pkl`, computes RMSE / MAE / MAPE / R^2 / directional accuracy, paired t-tests, writes `eval.json` per model and `comparison_seed{seed}.json`
   - `src/plots.py` — 4-panel figure (actual vs pred, loss curves, R^2 bars, error boxplots) → `artifacts/plots/comparison_seed{seed}.png`
+- [x] **VADER scoring + aggregation ported into `src/`** (done 2026-11-09)
+  - `src/score_vader.py` — Models A/B/C in one pass, methodology mirrors dissertation exactly (35-term crypto lexicon + intensity modifiers with sign-preserving boost, clamp to [-1, 1])
+  - `src/aggregate_vader.py` — joins per-tweet scores with daily OHLCV, outputs the 37-column training CSV schema the LSTM pipeline consumes
+  - `scripts/fetch_prices.py` — one-off historical OHLCV fetcher for arbitrary date windows
+  - `src/config.py` — Model B2 wired (same features as B, trained on 2022 CSV via TRAINING_CSV_OVERRIDES)
+  - Smoke-tested end-to-end on a 5-tweet sample; outputs match dissertation's 37-column schema
 
 ### Reproduced dissertation baseline (seed=42)
-This is the benchmark FinBERT has to beat.
+This is the benchmark the 2022 extension (Model B2) will be compared against.
 
 | Metric | Model A | Model B | Model C |
 |---|---|---|---|
@@ -54,24 +60,32 @@ Paired t-tests on |errors|: A vs B p=0.88, A vs C p=0.42, B vs C p=0.73 — all 
 
 ### Phase 2 — dissertation limitation closures
 Mapping each named limitation to the deliverable that closes it.
-- [ ] **L1 (VADER rule-based)** → swap VADER for FinBERT as the headline 2026 model; benchmark CryptoBERT alongside in ablation
-- [ ] **L2 (single window Sept–Nov 2021)** → extend training set to include 2022 bear + 2024 post-ETF recovery
-- [ ] **L3 (Twitter-only source)** → add Reddit ingest (`r/Bitcoin`, `r/CryptoCurrency`)
-- [ ] **L4 (weak directional accuracy)** → log directional accuracy daily on the live board alongside MAE
-- [ ] **L5 (unweighted aggregation)** → weight posts by author reach (Reddit upvotes; Twitter followers if re-added)
+- [ ] **L1 (VADER rule-based)** → transformer ablation (FinBERT / CryptoBERT) **deferred as future work**. VADER + crypto lexicon stays fixed across Phase 2 experiments so time-period and source variables can be isolated cleanly. See Decisions log 2026-11-09.
+- [ ] **L2 (single window Sept–Nov 2021)** → retrain pipeline (Model B2) ported, awaiting local run on 2022 bear-market tweets. 2022 CSV already on disk at `/Users/hamdaanismail/Documents/Extracted Tweets/archive (1) 2/bitcoin-tweets-2022.csv`.
+- [~] **L3 (Twitter-only source)** → **Reddit ingest live** via daily cron (r/Bitcoin top 25, VADER-scored titles + selftext). On-chain metrics (txn count, active addresses, exchange flow) still planned.
+- [ ] **L4 (weak directional accuracy)** → log directional accuracy daily on the live board alongside MAE (needs daily model inference, blocked on predictions pipeline)
+- [ ] **L5 (unweighted aggregation)** → weight Reddit posts by upvotes (small change to `daily_reddit_sentiment.py`); Twitter followers if re-added
 
 ### Phase 3 — live inference & dashboard
-- [ ] Daily ingest cron
-- [ ] Daily inference → predictions log
+- [x] **Daily ingest cron** — `scripts/daily_btc_ingest.py` + `scripts/daily_reddit_sentiment.py` + `.github/workflows/daily-ingest.yml` (pending commit at time of writing). BTC backfilled from 2024-01-10 (spot ETF approval day); r/Bitcoin sentiment starts from first cron run.
+- [x] **Live "Today's signals" block on homepage** — imports `data/daily/latest_btc.json` and `data/daily/latest_reddit.json` at build time; Vercel redeploys on each cron commit, keeping the site fresh daily without runtime API calls.
+- [x] **Research design block on homepage** — two-experiment framing (A: time regime, B: live Reddit) with explicit confound acknowledgement on the Reddit source.
+- [x] **README / landing-page limitation → deliverable narrative** — L1–L5 rows on the site, research-design section in README with experiment design and confound note.
+- [ ] Daily inference → predictions log (feeds L4 rolling accuracy)
 - [ ] Live dashboard reads predictions + rolling accuracy
-- [ ] README / landing-page limitation → deliverable narrative
 
 ## Decisions log
 
-- **2026-08-17** — Headline 2026 sentiment model: **FinBERT** (directly closes L1 as named in dissertation future-work), with **CryptoBERT** benchmarked in ablation. Rationale: FinBERT gives the cleanest narrative arc; CryptoBERT is the stronger candidate for crypto-slang OOD and may promote to headline if it wins.
+- **2026-11-09** — **Phase 2 reframed as two parallel experiments**, not a single "VADER-replacement" narrative. Experiment A (time regime generalisation) controls for sentiment method and varies time window using the 2022 Twitter dataset I already have on disk. Experiment B (live 2026 Reddit) is framed as a separate research question rather than a direct continuation, because the Twitter→Reddit source switch is a confound that L2 alone cleanly controls for. Writes up on the homepage and in the README.
+- **2026-11-09** — **FinBERT deferred as future work**. VADER + crypto lexicon was the dissertation's novel methodological contribution; Phase 2 keeps it fixed as the sentiment method across both experiments so results are cleanly attributable to time-period and source variables. Transformer ablation (FinBERT or CryptoBERT) revisited post-interviews.
+- **2026-11-09** — **Reddit RSS endpoint** chosen over JSON API after Reddit's anonymous `/top.json` endpoints began returning 403 in testing. RSS feed (`/top/.rss?t=day`) still serves anonymous clients and includes both title and selftext; may need to upgrade to OAuth if GitHub Actions shared IPs get rate-limited in CI.
+- **2026-11-09** — **BTC daily backfill starts at 2024-01-10** (spot ETF approval day) rather than from first cron run. Gives the chart meaningful history on day one and aligns the framing with the dissertation's Future Work F4 (post-ETF era).
+- **2026-11-09** — **Reddit sentiment data starts from first cron run**, not backfilled. Reddit's historical top-of-day endpoints are unreliable for anonymous access. Acknowledged in homepage copy.
+- **2026-08-17** — Headline 2026 sentiment model: **FinBERT** (directly closes L1 as named in dissertation future-work), with **CryptoBERT** benchmarked in ablation. *Superseded 2026-11-09 — see decision above.*
 - **2026-08-17** — Python 3.12.14 chosen over 3.13/3.14 for TF 2.17 compatibility.
 - **2026-08-17** — `.python-version` committed (not gitignored) for reproducibility.
 
 ## Blocked / open questions
 
-- None right now.
+- Will the Reddit RSS endpoint hold against GitHub Actions shared IPs? First few cron runs will tell. OAuth upgrade path pre-planned.
+- Daily model inference (needed for L4 rolling accuracy) still pending — requires either shipping the trained Keras model into the daily workflow or standing up a lightweight inference endpoint.

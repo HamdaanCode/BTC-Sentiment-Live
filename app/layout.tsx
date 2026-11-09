@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bitcoin Sentiment × Price — Hamdaan Ismail",
   description:
-    "Extending a BSc dissertation on LSTM Bitcoin price prediction into a live 2021 vs 2026 A/B comparison.",
+    "A personal research project: LSTM Bitcoin price prediction extended into a live 2021 vs 2026 A/B pipeline.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

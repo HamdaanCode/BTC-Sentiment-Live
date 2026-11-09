@@ -10,10 +10,14 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.config import (
     COLS_TO_SCALE,
+    COLS_TO_SCALE_PHASE2,
     FEATURES_BY_MODEL,
+    FEATURES_BY_MODEL_PHASE2,
     TARGET,
     TIMESTEPS,
     TRAINING_CSV,
+    TRAINING_CSV_BY_MODEL_PHASE2,
+    TRAINING_CSV_OVERRIDES,
     TRAIN_RATIO,
 )
 
@@ -26,17 +30,24 @@ class Windowed:
     y_test: np.ndarray
     scaler: MinMaxScaler
     df: pd.DataFrame  # scaled frame, kept for date lookup
+    cols_to_scale: list[str]  # kept so inverse_price can undo scaling correctly
 
 
-def load_scaled(csv_path: Path = TRAINING_CSV) -> tuple[pd.DataFrame, MinMaxScaler]:
+def load_scaled(
+    csv_path: Path = TRAINING_CSV,
+    cols_to_scale: list[str] | None = None,
+) -> tuple[pd.DataFrame, MinMaxScaler, list[str]]:
     df = pd.read_csv(csv_path)
     df["date"] = pd.to_datetime(df["date"])
     df = df.fillna(0)
 
+    if cols_to_scale is None:
+        cols_to_scale = COLS_TO_SCALE
+
     scaler = MinMaxScaler(feature_range=(0, 1))
     df_scaled = df.copy()
-    df_scaled[COLS_TO_SCALE] = scaler.fit_transform(df[COLS_TO_SCALE])
-    return df_scaled, scaler
+    df_scaled[cols_to_scale] = scaler.fit_transform(df[cols_to_scale])
+    return df_scaled, scaler, cols_to_scale
 
 
 def create_windows(
@@ -59,17 +70,37 @@ def temporal_split(
     return X[:split], X[split:], y[:split], y[split:]
 
 
-def prepare(model_key: str, csv_path: Path = TRAINING_CSV) -> Windowed:
-    if model_key not in FEATURES_BY_MODEL:
-        raise ValueError(f"unknown model {model_key!r}; expected one of {list(FEATURES_BY_MODEL)}")
-    df_scaled, scaler = load_scaled(csv_path)
-    X, y = create_windows(df_scaled, FEATURES_BY_MODEL[model_key])
+def prepare(model_key: str, csv_path: Path | None = None) -> Windowed:
+    """Build windowed train/test tensors for one model key.
+
+    Model keys A/B/C use the Phase 1 training CSV + VADER sentiment features.
+    Model keys D/E use their own Phase 2 training CSVs + FinBERT sentiment.
+    """
+    if model_key in FEATURES_BY_MODEL:
+        features = FEATURES_BY_MODEL[model_key]
+        cols = COLS_TO_SCALE
+        path = csv_path or TRAINING_CSV_OVERRIDES.get(model_key, TRAINING_CSV)
+    elif model_key in FEATURES_BY_MODEL_PHASE2:
+        features = FEATURES_BY_MODEL_PHASE2[model_key]
+        cols = COLS_TO_SCALE_PHASE2
+        path = csv_path or TRAINING_CSV_BY_MODEL_PHASE2[model_key]
+    else:
+        known = list(FEATURES_BY_MODEL) + list(FEATURES_BY_MODEL_PHASE2)
+        raise ValueError(f"unknown model {model_key!r}; expected one of {known}")
+
+    df_scaled, scaler, cols_used = load_scaled(path, cols_to_scale=cols)
+    X, y = create_windows(df_scaled, features)
     X_tr, X_te, y_tr, y_te = temporal_split(X, y)
-    return Windowed(X_tr, X_te, y_tr, y_te, scaler, df_scaled)
+    return Windowed(X_tr, X_te, y_tr, y_te, scaler, df_scaled, cols_used)
 
 
-def inverse_price(scaled_values: np.ndarray, scaler: MinMaxScaler) -> np.ndarray:
+def inverse_price(
+    scaled_values: np.ndarray,
+    scaler: MinMaxScaler,
+    cols_to_scale: list[str] | None = None,
+) -> np.ndarray:
     """Invert MinMax scaling for the target column (close sits at index 0)."""
-    dummy = np.zeros((len(scaled_values), len(COLS_TO_SCALE)))
+    cols = cols_to_scale if cols_to_scale is not None else COLS_TO_SCALE
+    dummy = np.zeros((len(scaled_values), len(cols)))
     dummy[:, 0] = np.asarray(scaled_values).flatten()
     return scaler.inverse_transform(dummy)[:, 0]
