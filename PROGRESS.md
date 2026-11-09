@@ -2,7 +2,7 @@
 
 Rolling status doc. Updated as work is completed. Newest at top of each section.
 
-Last updated: 2026-11-09 (daily ingest cron live, VADER port, Phase 2 reframed)
+Last updated: 2026-11-09 (site cleaned up: L1 removed, L3 marked done at source level, L4 moved to README future-work)
 
 ## Environment
 
@@ -60,11 +60,15 @@ Paired t-tests on |errors|: A vs B p=0.88, A vs C p=0.42, B vs C p=0.73 — all 
 
 ### Phase 2 — dissertation limitation closures
 Mapping each named limitation to the deliverable that closes it.
-- [ ] **L1 (VADER rule-based)** → transformer ablation (FinBERT / CryptoBERT) **deferred as future work**. VADER + crypto lexicon stays fixed across Phase 2 experiments so time-period and source variables can be isolated cleanly. See Decisions log 2026-11-09.
 - [ ] **L2 (single window Sept–Nov 2021)** → retrain pipeline (Model B2) ported, awaiting local run on 2022 bear-market tweets. 2022 CSV already on disk at `/Users/hamdaanismail/Documents/Extracted Tweets/archive (1) 2/bitcoin-tweets-2022.csv`.
-- [~] **L3 (Twitter-only source)** → **Reddit ingest live** via daily cron (r/Bitcoin top 25, VADER-scored titles + selftext). On-chain metrics (txn count, active addresses, exchange flow) still planned.
-- [ ] **L4 (weak directional accuracy)** → log directional accuracy daily on the live board alongside MAE (needs daily model inference, blocked on predictions pipeline)
+- [x] **L3 (Twitter-only source)** → **Reddit added as second live sentiment source** (r/Bitcoin top 25 daily, VADER-scored, same methodology as the dissertation's Twitter pipeline). On-chain metrics moved to README future-work.
 - [ ] **L5 (unweighted aggregation)** → weight Reddit posts by upvotes (small change to `daily_reddit_sentiment.py`); Twitter followers if re-added
+
+### Moved to future work (README)
+Documented limitations addressed in backlog rather than active sprint. The homepage shows only shipped or in-progress items so visitors don't read planned items as unshipped promises; these still live in README so the honest trail is preserved.
+- **L1** — transformer sentiment ablation (FinBERT / CryptoBERT). Deliberately kept out of Phase 2 so time-period and source variables can be isolated.
+- **L3 extended** — on-chain metrics ingest (blockchain.com public APIs for txn count, active addresses, exchange flow). Reddit already closes L3 for sentiment-source diversity; on-chain adds a non-sentiment signal family.
+- **L4** — rolling directional accuracy on the live page. Requires daily model inference in the cron; compound work with L1 and on-chain, so queued alongside.
 
 ### Phase 3 — live inference & dashboard
 - [x] **Daily ingest cron** — `scripts/daily_btc_ingest.py` + `scripts/daily_reddit_sentiment.py` + `.github/workflows/daily-ingest.yml` (pending commit at time of writing). BTC backfilled from 2024-01-10 (spot ETF approval day); r/Bitcoin sentiment starts from first cron run.
@@ -76,6 +80,7 @@ Mapping each named limitation to the deliverable that closes it.
 
 ## Decisions log
 
+- **2026-11-09** — **Homepage L1–L5 list trimmed to shipped + in-progress only.** L1 (FinBERT) and L4 (rolling directional accuracy) removed from the public limitations list and moved into the README's new "Future work" section. L3 marked Done at the sentiment-source level (Reddit as second source); on-chain integration also moved to README future-work. Rationale: public face should read "look what I built / am building" rather than "look at this long planned list"; internal docs (PROGRESS, README) still carry the honest trail of what's queued and why. All three items remain trackable; they're just not advertised on the site as unshipped promises.
 - **2026-11-09** — **Phase 2 reframed as two parallel experiments**, not a single "VADER-replacement" narrative. Experiment A (time regime generalisation) controls for sentiment method and varies time window using the 2022 Twitter dataset I already have on disk. Experiment B (live 2026 Reddit) is framed as a separate research question rather than a direct continuation, because the Twitter→Reddit source switch is a confound that L2 alone cleanly controls for. Writes up on the homepage and in the README.
 - **2026-11-09** — **FinBERT deferred as future work**. VADER + crypto lexicon was the dissertation's novel methodological contribution; Phase 2 keeps it fixed as the sentiment method across both experiments so results are cleanly attributable to time-period and source variables. Transformer ablation (FinBERT or CryptoBERT) revisited post-interviews.
 - **2026-11-09** — **Reddit RSS endpoint** chosen over JSON API after Reddit's anonymous `/top.json` endpoints began returning 403 in testing. RSS feed (`/top/.rss?t=day`) still serves anonymous clients and includes both title and selftext; may need to upgrade to OAuth if GitHub Actions shared IPs get rate-limited in CI.

@@ -30,15 +30,23 @@ Note on the source confound: the live Reddit pipeline is framed as a separate ex
 
 ## Roadmap
 
+### Shipped
 - [x] Reproduce the 2021 baseline (Model B) end-to-end from a clean venv
 - [x] Daily ingest cron: BTC OHLCV + r/Bitcoin sentiment, committed to repo
 - [x] Live "Today's signals" block on the homepage
 - [x] Port the dissertation's VADER scoring into `src/` for the 2022 retrain
-- [ ] Run Experiment A: train Model B2 on 2022 bear-market Twitter data
-- [ ] Rolling directional accuracy on the live page (needs daily model inference)
+- [x] L3 (Twitter-only source): Reddit added as a second live sentiment source
+
+### In progress
+- [ ] Run Experiment A: train Model B2 on 2022 bear-market Twitter data (L2)
 - [ ] L5: upvote-weighted Reddit sentiment
-- [ ] On-chain metrics ingest (transaction count, active addresses, exchange flow)
-- [ ] L1: transformer ablation (FinBERT / CryptoBERT) — deferred future work
+
+### Future work
+These are documented limitations addressed in the backlog rather than in the active sprint. The site shows only what's shipped or in progress; this section is the fuller picture.
+
+- **L4 — rolling directional accuracy on the live page.** Requires daily model inference inside the cron: load the trained Keras model, feed the last N days of features, log tomorrow's prediction, compare to actual next day, maintain a rolling 30-day accuracy. Deferred because it compounds with L1 and on-chain ingest and would benefit from being shipped alongside them.
+- **L3 extended — on-chain metrics ingest** (transaction count, active addresses, exchange flows via blockchain.com's public APIs). Reddit source closed L3 for sentiment-source diversity; on-chain adds a non-sentiment signal family.
+- **L1 — transformer sentiment ablation** (FinBERT or CryptoBERT). VADER + crypto lexicon stays fixed as the Phase 2 sentiment method so time-period and source variables can be isolated cleanly; a transformer swap is a natural next experiment once Phase 2 experiments are concluded.
 
 ## Repo layout
 

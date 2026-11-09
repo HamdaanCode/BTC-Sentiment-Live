@@ -200,6 +200,6 @@ Before you stop:
 - [ ] PROGRESS.md updated with date + decision log entry
 - [ ] (Stretch) L5 shipped and flipped to Done
 
-After this session you can honestly say in interviews: *"Two of the dissertation's five named limitations closed with published results on the live site; one deliberately deferred with methodological reasoning; two remaining as future work with a concrete plan."*
+After this session you can honestly say in interviews: *"Three of the dissertation's named limitations closed with results shipping on the live site (L2 2022 bear-regime retrain, L3 Reddit as a second sentiment source, L5 upvote-weighted aggregation). Transformer ablation, on-chain metrics, and rolling directional accuracy are queued in the README roadmap as next-phase work."*
 
 That's a materially stronger story than today's state.

@@ -218,15 +218,9 @@ export default function Home() {
           />
           <LimitationRow
             id="L3"
-            status="active"
+            status="done"
             title="Twitter-only sentiment source"
-            deliverable="Reddit ingest live: daily pull of top 25 r/Bitcoin posts, VADER-scored title + selftext, aggregated into a daily compound score. On-chain metrics slated after."
-          />
-          <LimitationRow
-            id="L4"
-            status="planned"
-            title="Weak directional accuracy (~40%)"
-            deliverable="Log rolling directional accuracy alongside MAE on this page, updated daily as the live pipeline logs predictions."
+            deliverable="Reddit added as a second live sentiment source: daily pull of top 25 r/Bitcoin posts, VADER-scored title + selftext (same methodology as the dissertation's Twitter pipeline), aggregated into a daily compound score."
           />
           <LimitationRow
             id="L5"
@@ -246,7 +240,6 @@ export default function Home() {
           <StatusRow status="done" label="Training pipeline reproduces the 2021 baseline end-to-end" />
           <StatusRow status="done" label="Daily ingest cron (BTC price + r/Bitcoin sentiment)" />
           <StatusRow status="active" label="L2 · 2022 bear market retrain (VADER + crypto lexicon)" />
-          <StatusRow status="planned" label="Live inference + rolling accuracy on this page" />
         </ul>
       </section>
     </main>

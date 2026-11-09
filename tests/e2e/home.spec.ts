@@ -79,7 +79,9 @@ test.describe("Homepage — landing content", () => {
     await expect(page.getByText("BTC rows", { exact: true })).toBeVisible();
   });
 
-  test("L3 row shows live Reddit ingest wording", async ({ page }) => {
-    await expect(page.getByText(/Reddit ingest live/i)).toBeVisible();
+  test("L3 row shows Reddit as a shipped second sentiment source", async ({ page }) => {
+    await expect(
+      page.getByText(/Reddit added as a second live sentiment source/i)
+    ).toBeVisible();
   });
 });
