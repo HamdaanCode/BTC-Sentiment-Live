@@ -129,7 +129,6 @@ export default function Home() {
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
             VADER with my crypto lexicon stays fixed as the sentiment method
             across Phase 2 so time-period and source variables stay isolated.
-            A transformer ablation (FinBERT or CryptoBERT) is deferred.
           </p>
         </div>
         <ul className="mb-10 space-y-3">
@@ -211,12 +210,6 @@ export default function Home() {
           </p>
         </div>
         <ul className="space-y-3">
-          <LimitationRow
-            id="L1"
-            status="planned"
-            title="VADER is rule-based, misses context"
-            deliverable="Transformer ablation (FinBERT or CryptoBERT) deferred as future work. VADER + crypto lexicon remains the fixed sentiment method across Phase 2 so time-period and source variables can be isolated cleanly."
-          />
           <LimitationRow
             id="L2"
             status="planned"

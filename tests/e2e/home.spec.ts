@@ -79,14 +79,7 @@ test.describe("Homepage — landing content", () => {
     await expect(page.getByText("BTC rows", { exact: true })).toBeVisible();
   });
 
-  test("L1 and L3 rows reflect the Nov 2026 reframe", async ({ page }) => {
-    // L1 was flipped from "In progress" to "Planned" (deferred) wording.
-    await expect(
-      page.getByText(/transformer ablation.*deferred as future work/i)
-    ).toBeVisible();
-    // L3 description now mentions the live Reddit ingest.
-    await expect(
-      page.getByText(/Reddit ingest live/i)
-    ).toBeVisible();
+  test("L3 row shows live Reddit ingest wording", async ({ page }) => {
+    await expect(page.getByText(/Reddit ingest live/i)).toBeVisible();
   });
 });
