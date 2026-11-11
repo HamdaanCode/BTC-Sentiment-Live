@@ -17,12 +17,12 @@ import type { DissertationDay } from "./dissertationData";
 
 type Props = { data: DissertationDay[] };
 
-const AXIS = "#71717a";
-const GRID = "rgba(113, 113, 122, 0.15)";
-const PRICE = "#f59e0b";
-const MODEL_A = "#94a3b8";
-const MODEL_B = "#10b981";
-const MODEL_C = "#a78bfa";
+const AXIS = "#8b949e";
+const GRID = "rgba(139, 148, 158, 0.12)";
+const PRICE = "#f7931a";       /* bitcoin orange */
+const MODEL_A = "#8b949e";     /* muted grey */
+const MODEL_B = "#f7931a";     /* bitcoin orange — winner */
+const MODEL_C = "#d29922";     /* dim amber */
 
 const shortDate = (iso: string) => {
   const d = new Date(iso);
@@ -37,11 +37,12 @@ const usd = (n: number) =>
   });
 
 const tooltipStyle = {
-  background: "rgba(24, 24, 27, 0.95)",
-  border: "1px solid rgba(113, 113, 122, 0.4)",
-  borderRadius: "0.5rem",
-  color: "#fafafa",
-  fontSize: "0.8rem",
+  background: "#161b22",
+  border: "1px solid #30363d",
+  borderRadius: 0,
+  color: "#e6edf3",
+  fontSize: "0.75rem",
+  fontFamily: "ui-monospace, Menlo, monospace",
 };
 
 export function PriceChart({ data }: Props) {

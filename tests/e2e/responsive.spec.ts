@@ -13,13 +13,13 @@ test.describe("Responsive layout", () => {
     expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
   });
 
-  test("Phase 2 section is reachable on mobile", async ({ page }) => {
+  test("Today's signals block is reachable on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
 
-    await page.getByRole("link", { name: /phase 2 progress/i }).click();
+    await page.getByRole("link", { name: /today.*signals/i }).click();
     await expect(
-      page.getByRole("heading", { name: /taking it live in 2026/i })
+      page.getByText(/today.*signals/i).first()
     ).toBeInViewport();
   });
 });

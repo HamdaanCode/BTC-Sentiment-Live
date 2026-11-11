@@ -20,358 +20,270 @@ const sentimentLabel = (compound: number) =>
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-16 sm:py-24">
-      <header className="mb-16">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-          Machine learning for Bitcoin price prediction
+    <main className="mx-auto w-full max-w-3xl px-5 py-12 sm:py-20">
+      {/* HEADER */}
+      <header className="mb-14">
+        <div className="mb-3 text-xs text-[var(--muted)]">
+          ~/btc-sentiment-live
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--accent)] sm:text-4xl">
+          bitcoin-sentiment-live
         </h1>
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-          An ongoing personal project. Three LSTM models forecasting daily
-          Bitcoin close across the Sept–Nov 2021 all-time high, using
-          tweet-derived sentiment as an input feature. Baseline VADER compared
-          against a custom 35-term crypto lexicon and an intensity-weighted
-          variant. Now being extended into a live pipeline for 2026 markets.
+        <p className="mt-5 leading-relaxed text-[var(--foreground)]">
+          A Bitcoin price prediction project. Three LSTMs trained on daily
+          price action plus social-media sentiment, answering a question that
+          keeps getting more relevant as the market gets more reflexive:{" "}
+          <span className="text-[var(--accent)]">
+            does what people say about Bitcoin actually help predict where its
+            price is going next?
+          </span>
         </p>
-        <div className="mt-8 flex flex-wrap gap-3 text-sm">
+        <p className="mt-3 leading-relaxed text-[var(--muted)]">
+          Started as my dissertation at Heriot-Watt. Now running as a live
+          extension — daily data ingested through a GitHub Actions cron, new
+          experiments run against the original pipeline, everything published
+          here with the actual numbers.
+        </p>
+        <div className="mt-7 flex flex-wrap gap-3 text-xs">
           <a
             href="https://github.com/HamdaanCode/BTC-Sentiment-Live"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            className="border border-[var(--border)] px-3 py-1.5 text-[var(--foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
-            Repo ↗
+            [ github ↗ ]
           </a>
           <a
-            href="#phase-2"
-            className="rounded-full border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            href="#live"
+            className="border border-[var(--border)] px-3 py-1.5 text-[var(--foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
-            Phase 2 progress ↓
+            [ today&apos;s signals ↓ ]
           </a>
         </div>
       </header>
 
-      <section className="mb-20">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            The research, in numbers
-          </h2>
-          <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
-            Three LSTM variants trained on daily Bitcoin data plus tweet-derived
-            sentiment. Sentiment came in three flavours: a baseline VADER
-            (Model A), a custom 35-term crypto lexicon (Model B), and an
-            intensity-weighted variant (Model C). Model B won.
+      {/* LIVE SIGNALS — sticky-post styling */}
+      <section id="live" className="forum-post mb-14 p-5 scroll-mt-16">
+        <div className="mb-4 flex items-baseline justify-between">
+          <div className="text-xs uppercase tracking-wider text-[var(--accent)]">
+            [ live ] today&apos;s signals
+          </div>
+          <div className="text-xs text-[var(--muted)]">daily cron</div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Metric
+            label="btc close"
+            value={formatUsd(latestBtc.close)}
+            caption={latestBtc.date}
+          />
+          <Metric
+            label="r/bitcoin"
+            value={sentimentLabel(latestReddit.weighted_compound)}
+            caption={`w ${latestReddit.weighted_compound.toFixed(3)} · r ${latestReddit.avg_compound.toFixed(3)}`}
+          />
+          <Metric
+            label="posts scored"
+            value={String(latestReddit.posts_scored)}
+            caption={`${latestReddit.posts_with_selftext} with selftext`}
+          />
+          <Metric
+            label="btc rows"
+            value={String(latestBtc.rows_total)}
+            caption={`since ${latestBtc.backfill_start}`}
+          />
+        </div>
+      </section>
+
+      {/* ORIGINAL POST — MARCH 2026 */}
+      <section className="mb-14">
+        <ForumHeader
+          marker="original post"
+          author="hamdaan.btc"
+          date="March 2026"
+          title="First results — can tweets predict Bitcoin price?"
+        />
+        <div className="mt-5 space-y-4 leading-relaxed text-[var(--foreground)]">
+          <p>
+            Three LSTMs trained on 91 days of daily Bitcoin price data plus
+            tweet-derived sentiment, covering the Sept–Nov 2021 all-time-high
+            run-up.{" "}
+            <span className="text-[var(--accent)]">1.38 million tweets</span>{" "}
+            scored with VADER plus a custom 35-term crypto lexicon.
+          </p>
+          <p>
+            Three sentiment variants were compared head-to-head: a plain VADER
+            baseline, a crypto-adjusted lexicon (adding terms like{" "}
+            <span className="font-mono text-[var(--accent)]">hodl</span>,{" "}
+            <span className="font-mono text-[var(--accent)]">moon</span>,{" "}
+            <span className="font-mono text-[var(--accent)]">rekt</span> on
+            VADER&apos;s scoring scale), and a crypto-plus-intensity variant
+            that boosted CAPS, exclamations, and intensifiers.{" "}
+            <span className="text-[var(--accent)]">
+              Model B (crypto lexicon only) won.
+            </span>
           </p>
         </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Metric label="R²" value="0.787" caption="best model" />
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Metric label="R²" value="0.787" caption="Model B" />
           <Metric label="MAE" value="$1,300" caption="test set" />
           <Metric label="MAPE" value="2.16%" caption="Model B" />
           <Metric
-            label="Dataset"
+            label="dataset"
             value={`${(totalTweets / 1_000_000).toFixed(2)}M`}
             caption="tweets"
           />
         </div>
-
-        <div className="mt-12 space-y-10">
-          <ChartCard
-            title="Bitcoin closing price"
-            subtitle={`Daily close · ${dateRange}`}
-          >
+        <div className="mt-8 space-y-5">
+          <ChartCard title="Bitcoin closing price" subtitle={dateRange}>
             <PriceChart data={dissertationData} />
           </ChartCard>
-
           <ChartCard
             title="Daily sentiment — three models"
-            subtitle="Mean per-tweet sentiment aggregated per day. Higher = more bullish."
+            subtitle="higher = more bullish on the day"
           >
             <SentimentChart data={dissertationData} />
             <Legend
               items={[
-                { color: "#94a3b8", label: "A · baseline VADER" },
-                { color: "#10b981", label: "B · crypto lexicon (winner)" },
-                { color: "#a78bfa", label: "C · intensity-weighted" },
+                { color: "#8b949e", label: "A · baseline VADER" },
+                { color: "#f7931a", label: "B · crypto lexicon (winner)" },
+                { color: "#d29922", label: "C · intensity-weighted" },
               ]}
             />
           </ChartCard>
-
           <ChartCard
             title="Tweet volume per day"
-            subtitle="Volume of BTC-tagged tweets in the training window."
+            subtitle="BTC-tagged tweets in the training window"
           >
             <TweetVolumeChart data={dissertationData} />
           </ChartCard>
         </div>
       </section>
 
-      <section id="phase-2" className="mb-20 scroll-mt-16">
-        <div className="mb-8">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-            Phase 2 · in progress
-          </div>
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Taking it live in 2026
-          </h2>
-          <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
-            Phase 1 asked{" "}
-            <em>does sentiment help predict Bitcoin price?</em> Phase 2 asks the
-            harder questions: <em>does the pipeline generalise across market
-            regimes</em>, and <em>does sentiment from a different community
-            still carry signal in a post-ETF market?</em>
+      {/* REPLY #1 — NOV 2026, 2022 BEAR EXTENSION */}
+      <section className="mb-14">
+        <ForumHeader
+          marker="reply #1"
+          author="hamdaan.btc"
+          date="November 2026"
+          title="Does it still work in a bear market?"
+        />
+        <div className="mt-5 space-y-4 leading-relaxed text-[var(--foreground)]">
+          <p>
+            Same methodology, new data. Took the{" "}
+            <span className="text-[var(--accent)]">H1 2022</span> Bitcoin
+            tweet dataset — six months of posts, 7.3 million tweets through
+            the Terra/Luna collapse in May and the 3AC collapse in June — and
+            retrained Model B on it.
+          </p>
+          <p>
+            The honest answer: partly.{" "}
+            <span className="text-[var(--accent)]">
+              R² collapsed from 0.787 to 0.018
+            </span>
+            . The model struggles to predict Bitcoin price magnitudes across a
+            full regime change. But{" "}
+            <span className="text-[var(--accent)]">
+              directional accuracy went up from 38% to 60%
+            </span>
+            , meaningfully above random. The pipeline keeps directional signal
+            when markets are trending, even when the magnitudes fall apart.
           </p>
         </div>
-
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Research design
-          </h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            VADER with my crypto lexicon stays fixed as the sentiment method
-            across Phase 2 so time-period and source variables stay isolated.
-          </p>
-        </div>
-        <ul className="mb-10 space-y-3">
-          <ExperimentRow
-            id="A"
-            title="Time regime generalisation"
-            varies="Time period (2021 Sept–Nov vs 2022 bear market)"
-            controls="Sentiment method (VADER + crypto lexicon), source (Twitter)"
-            question="Does my pipeline still work when the market mood flips?"
-          />
-          <ExperimentRow
-            id="B"
-            title="Live 2026 Reddit pipeline"
-            varies="Source (Reddit instead of Twitter), time period (post-ETF)"
-            controls="Sentiment method (VADER + crypto lexicon)"
-            question="Does sentiment from a different community carry signal in a post-ETF market?"
-          />
-        </ul>
-
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Today&apos;s signals
-          </h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Daily BTC close and r/Bitcoin sentiment pulled fresh every day via a
-            GitHub Actions cron. BTC series begins on the spot ETF approval day
-            (10 Jan 2024); the Reddit series starts from the first cron run.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Metric
-            label="BTC close"
-            value={formatUsd(latestBtc.close)}
-            caption={latestBtc.date}
-          />
-          <Metric
-            label="r/Bitcoin"
-            value={sentimentLabel(latestReddit.weighted_compound)}
-            caption={`weighted ${latestReddit.weighted_compound.toFixed(3)} · raw ${latestReddit.avg_compound.toFixed(3)}`}
-          />
-          <Metric
-            label="Posts scored"
-            value={String(latestReddit.posts_scored)}
-            caption={`${latestReddit.posts_with_selftext} with selftext`}
-          />
-          <Metric
-            label="BTC rows"
-            value={String(latestBtc.rows_total)}
-            caption={`since ${latestBtc.backfill_start}`}
-          />
-        </div>
-
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Reproduced baseline (seed=42)
-          </h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            The 2021 pipeline now runs end-to-end from a clean venv.
-            These are the numbers the 2022 extension has to match (or not).
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Metric label="R²" value="0.782" caption="Model A · reproduced" />
-          <Metric label="MAE" value="$1,293" caption="Model A · test set" />
-          <Metric label="MAPE" value="2.15%" caption="Model A" />
-          <Metric
-            label="Dir. accuracy"
-            value="34.6%"
-            caption="below 50%"
-          />
-        </div>
-
-        <div className="mt-12 mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Experiment A results · H1 2022 bear window (seed=42)
-          </h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Model B2 retrained on 6 months (Jan–Jun 2022) covering the full
-            bear-market setup through Terra/Luna and 3AC. 7.3M tweets scored,
-            181 days, 54-day test set (2x the dissertation&apos;s original).
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Metric label="R²" value="0.018" caption="Model B2 · bear regime" />
-          <Metric label="MAE" value="$3,670" caption="Model B2 · test set" />
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Metric label="R²" value="0.018" caption="bear regime" />
+          <Metric label="MAE" value="$3,670" caption="test set" />
           <Metric label="MAPE" value="15.7%" caption="Model B2" />
           <Metric
-            label="Dir. accuracy"
+            label="dir. accuracy"
             value="60.4%"
             caption="above random"
           />
         </div>
+      </section>
 
-        <div className="mt-12 mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Known limitations → Phase 2 deliverables
-          </h3>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            Every limitation surfaced in Phase 1 mapped to what closes it.
+      {/* REPLY #2 — NOV 2026, REDDIT RANK WEIGHTING */}
+      <section className="mb-14">
+        <ForumHeader
+          marker="reply #2"
+          author="hamdaan.btc"
+          date="November 2026"
+          title="Not all Reddit posts are equal."
+        />
+        <div className="mt-5 space-y-4 leading-relaxed text-[var(--foreground)]">
+          <p>
+            The daily sentiment pipeline was averaging every post equally. A
+            top-of-the-day post and a bottom-of-the-day post counted the same,
+            which smooths out the signal that engagement actually drives.
+          </p>
+          <p>
+            Reddit&apos;s public endpoint doesn&apos;t expose raw vote counts,
+            but it does expose rank — and Reddit&apos;s ranking is
+            score-based. So the ingest now weights each post by its rank in
+            the top-of-day listing.{" "}
+            <span className="text-[var(--accent)]">
+              Top posts count about 4.7x more
+            </span>{" "}
+            than bottom-ranked posts.
+          </p>
+          <p>
+            Today the raw sentiment reads{" "}
+            <span className="font-mono text-[var(--accent)]">
+              {latestReddit.avg_compound >= 0 ? "+" : ""}
+              {latestReddit.avg_compound.toFixed(3)}
+            </span>
+            ; the weighted sentiment reads{" "}
+            <span className="font-mono text-[var(--accent)]">
+              {latestReddit.weighted_compound >= 0 ? "+" : ""}
+              {latestReddit.weighted_compound.toFixed(3)}
+            </span>
+            . When they diverge like this, top-ranked posts are more muted
+            than the lower-ranked ones. That&apos;s the gap that previously
+            got averaged away.
           </p>
         </div>
-        <ul className="space-y-3">
-          <LimitationRow
-            id="L2"
-            status="done"
-            title="Only a 91-day window (Sept–Nov 2021)"
-            deliverable="Closed. Model B2 retrained on 6 months (H1 2022: Jan–Jun), 54-day test set covering Terra/Luna + 3AC. R² = 0.018 (positive but far below the 2021 baseline&apos;s 0.77), MAE $3,670, directional accuracy 60.4%. The pipeline generalises weakly on magnitude under regime change but retains directional signal above random — exactly what L2 was designed to surface."
-          />
-          <LimitationRow
-            id="L3"
-            status="done"
-            title="Twitter-only sentiment source"
-            deliverable="Reddit added as a second live sentiment source: daily pull of top 25 r/Bitcoin posts, VADER-scored title + selftext (same methodology as the dissertation's Twitter pipeline), aggregated into a daily compound score."
-          />
-          <LimitationRow
-            id="L5"
-            status="done"
-            title="All posts weighted equally in daily aggregation"
-            deliverable="Closed. Reddit posts now weighted by log-rank in the top-of-day listing (Reddit's own score-based ordering), since the public RSS endpoint doesn't expose raw vote counts. Both unweighted and weighted compound scores are published daily on the live site — the gap between them is itself a signal (e.g. 2026-11-11: raw +0.09, weighted +0.04 → top-ranked posts more muted than the broader top-25 pool)."
-          />
-        </ul>
+      </section>
 
-        <div className="mt-12 mb-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Pipeline status
-          </h3>
+      {/* COMING SOON */}
+      <section className="mt-20 border-t border-dashed border-[var(--border)] pt-10">
+        <div className="space-y-3 text-center text-sm text-[var(--muted)]">
+          <div>&gt; drafting next reply...</div>
+          <div className="text-[var(--accent)]">
+            &gt; more coming soon
+            <span className="animate-pulse">_</span>
+          </div>
         </div>
-        <ul className="space-y-2 text-sm">
-          <StatusRow status="done" label="Environment: pyenv + Python 3.12 + reproducible .venv" />
-          <StatusRow status="done" label="Training pipeline reproduces the 2021 baseline end-to-end" />
-          <StatusRow status="done" label="Daily ingest cron (BTC price + r/Bitcoin sentiment)" />
-          <StatusRow status="done" label="L2 · 2022 bear market retrain (VADER + crypto lexicon)" />
-        </ul>
       </section>
     </main>
   );
 }
 
-type Status = "done" | "active" | "planned";
-
-const STATUS_DOT: Record<Status, string> = {
-  done: "bg-emerald-500",
-  active: "bg-amber-400",
-  planned: "bg-zinc-400 dark:bg-zinc-600",
-};
-
-const STATUS_LABEL: Record<Status, string> = {
-  done: "Done",
-  active: "In progress",
-  planned: "Planned",
-};
-
-function ExperimentRow({
-  id,
+function ForumHeader({
+  marker,
+  author,
+  date,
   title,
-  varies,
-  controls,
-  question,
 }: {
-  id: string;
+  marker: string;
+  author: string;
+  date: string;
   title: string;
-  varies: string;
-  controls: string;
-  question: string;
 }) {
   return (
-    <li className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-          Experiment {id}
+    <>
+      <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--muted)]">
+        <span className="text-[var(--accent)]">[{marker}]</span>
+        <span>·</span>
+        <span>
+          posted by{" "}
+          <span className="text-[var(--foreground)]">{author}</span>
         </span>
-        <span className="text-sm font-medium">{title}</span>
+        <span>·</span>
+        <span>{date}</span>
       </div>
-      <dl className="mt-2 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
-            varies
-          </dt>
-          <dd>{varies}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
-            controls
-          </dt>
-          <dd>{controls}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-mono text-xs uppercase tracking-wider text-zinc-500">
-            asks
-          </dt>
-          <dd className="italic">{question}</dd>
-        </div>
-      </dl>
-    </li>
-  );
-}
-
-function LimitationRow({
-  id,
-  status,
-  title,
-  deliverable,
-}: {
-  id: string;
-  status: Status;
-  title: string;
-  deliverable: string;
-}) {
-  return (
-    <li className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-          {id}
-        </span>
-        <span className="text-sm font-medium">{title}</span>
-        <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-          <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} />
-          {STATUS_LABEL[status]}
-        </span>
-      </div>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        {deliverable}
-      </p>
-    </li>
-  );
-}
-
-function StatusRow({ status, label }: { status: Status; label: string }) {
-  return (
-    <li className="flex items-center gap-2.5">
-      <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} />
-      <span
-        className={
-          status === "done"
-            ? "text-zinc-700 line-through decoration-zinc-400 dark:text-zinc-400"
-            : status === "active"
-            ? "font-medium"
-            : "text-zinc-500 dark:text-zinc-400"
-        }
-      >
-        {label}
-      </span>
-    </li>
+      <h2 className="text-2xl font-bold leading-tight tracking-tight text-[var(--foreground)] sm:text-3xl">
+        {title}
+      </h2>
+    </>
   );
 }
 
@@ -385,16 +297,14 @@ function Metric({
   caption: string;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
-      <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+    <div className="border border-[var(--border)] bg-[var(--panel)] p-3">
+      <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
         {label}
       </div>
-      <div className="mt-1 font-mono text-2xl font-semibold tabular-nums">
+      <div className="mt-1 text-xl font-bold tabular-nums text-[var(--accent)] sm:text-2xl">
         {value}
       </div>
-      <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-        {caption}
-      </div>
+      <div className="mt-0.5 text-[10px] text-[var(--muted)]">{caption}</div>
     </div>
   );
 }
@@ -409,12 +319,12 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/40">
-      <div className="mb-4">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          {subtitle}
-        </p>
+    <div className="border border-[var(--border)] bg-[var(--panel)] p-4">
+      <div className="mb-3">
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">
+          {title}
+        </h3>
+        <p className="mt-0.5 text-xs text-[var(--muted)]">{subtitle}</p>
       </div>
       {children}
     </div>
@@ -427,11 +337,11 @@ function Legend({
   items: { color: string; label: string }[];
 }) {
   return (
-    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-[var(--muted)]">
       {items.map((it) => (
         <div key={it.label} className="flex items-center gap-1.5">
           <span
-            className="h-2 w-2 rounded-full"
+            className="h-2 w-2"
             style={{ background: it.color }}
           />
           {it.label}
