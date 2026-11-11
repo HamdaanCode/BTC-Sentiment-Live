@@ -166,8 +166,8 @@ export default function Home() {
           />
           <Metric
             label="r/Bitcoin"
-            value={sentimentLabel(latestReddit.avg_compound)}
-            caption={`compound ${latestReddit.avg_compound.toFixed(3)}`}
+            value={sentimentLabel(latestReddit.weighted_compound)}
+            caption={`weighted ${latestReddit.weighted_compound.toFixed(3)} · raw ${latestReddit.avg_compound.toFixed(3)}`}
           />
           <Metric
             label="Posts scored"
@@ -245,9 +245,9 @@ export default function Home() {
           />
           <LimitationRow
             id="L5"
-            status="planned"
+            status="done"
             title="All posts weighted equally in daily aggregation"
-            deliverable="Weight posts by author reach — Reddit upvotes, and follower count if Twitter is re-added."
+            deliverable="Closed. Reddit posts now weighted by log-rank in the top-of-day listing (Reddit's own score-based ordering), since the public RSS endpoint doesn't expose raw vote counts. Both unweighted and weighted compound scores are published daily on the live site — the gap between them is itself a signal (e.g. 2026-11-11: raw +0.09, weighted +0.04 → top-ranked posts more muted than the broader top-25 pool)."
           />
         </ul>
 

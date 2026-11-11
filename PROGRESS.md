@@ -2,7 +2,7 @@
 
 Rolling status doc. Updated as work is completed. Newest at top of each section.
 
-Last updated: 2026-11-11 (L2 closed with H1 2022 experimental results published to site)
+Last updated: 2026-11-11 (L2 and L5 both closed; 3 of the dissertation's named limitations now closed on the live site)
 
 ## Environment
 
@@ -62,7 +62,7 @@ Paired t-tests on |errors|: A vs B p=0.88, A vs C p=0.42, B vs C p=0.73 — all 
 Mapping each named limitation to the deliverable that closes it.
 - [x] **L2 (single window Sept–Nov 2021)** → Closed 2026-11-11. Model B2 retrained on **H1 2022 (Jan 1 – Jun 30, 181 days, 7.3M tweets)**. Train/test 70/30 → 127/54 (test set 2x the dissertation's). Results on 54-day test set: **R² 0.018, MAE $3,670, MAPE 15.7%, Directional accuracy 60.4%**. Interpretation: pipeline generalises weakly on magnitude under regime change (R² drops from 0.77 → 0.018) but retains directional signal above random. Published on site under "Experiment A results". Full reproducible record: Colab notebook committed as `Bitcoin_LSTM_2022_Dataset.ipynb`; training CSV at `reference/data/NEW_lstm_training_data_2022.csv`.
 - [x] **L3 (Twitter-only source)** → **Reddit added as second live sentiment source** (r/Bitcoin top 25 daily, VADER-scored, same methodology as the dissertation's Twitter pipeline). On-chain metrics moved to README future-work.
-- [ ] **L5 (unweighted aggregation)** → weight Reddit posts by upvotes (small change to `daily_reddit_sentiment.py`); Twitter followers if re-added
+- [x] **L5 (unweighted aggregation)** → Closed 2026-11-11. `daily_reddit_sentiment.py` now computes a `weighted_compound` column alongside the unweighted `avg_compound`. Reddit's public RSS doesn't expose raw vote counts, so posts are weighted by **log-rank in the top-of-day listing** (Reddit's own score-based ordering). Weight formula: `log(1 + POST_LIMIT - rank_zero_indexed)` → top post ≈ 3.26, bottom post ≈ 0.69, ratio ~4.7x. Both numbers published on the site daily; the gap between them is itself a signal (e.g. 2026-11-11: raw +0.09, weighted +0.04 → top-ranked posts more muted than lower-ranked ones). OAuth upgrade for direct vote counts queued as future work.
 
 ### Moved to future work (README)
 Documented limitations addressed in backlog rather than active sprint. The homepage shows only shipped or in-progress items so visitors don't read planned items as unshipped promises; these still live in README so the honest trail is preserved.
@@ -80,6 +80,7 @@ Documented limitations addressed in backlog rather than active sprint. The homep
 
 ## Decisions log
 
+- **2026-11-11** — **L5 shipped via log-rank weighting, not raw upvotes.** Reddit's public RSS endpoint doesn't expose vote counts (fields: author, content, title, summary, link — no `score`/`ups`/`votes`). Rather than add OAuth to the critical path, used post rank in the top-of-day listing as a proxy for upvote weight (Reddit's own ordering is score-based). Weight formula `log(1 + 25 - rank_zero_indexed)` gives ~4.7x ratio between top and bottom post. Both weighted and unweighted compound now published daily; difference is itself a signal (top-ranked vs broader-top-25 sentiment divergence). OAuth upgrade documented as future work in README.
 - **2026-11-11** — **Experiment A executed on H1 2022 (not May-June).** Initial Terra/Luna + 3AC window (May-June, 61 days) gave R² = -2.43 — the 70/30 split put the test set inside the June 3AC crash, a distribution the training set never saw. Extended to full H1 2022 (Jan-Jun, 181 days, 7.3M tweets) which directly addresses the dissertation's own named limitation on sample size (Section 7.3) and its Future Work recommendation of a "6-12 month window on the 2022 bear market" (Section 7.4). Re-run gave R² = 0.018 (positive), MAE $3,670, Directional 60.4%. Positive-but-low R² is an honest generalisation finding, not a tuning failure. Numbers published to site.
 - **2026-11-09** — **Homepage L1–L5 list trimmed to shipped + in-progress only.** L1 (FinBERT) and L4 (rolling directional accuracy) removed from the public limitations list and moved into the README's new "Future work" section. L3 marked Done at the sentiment-source level (Reddit as second source); on-chain integration also moved to README future-work. Rationale: public face should read "look what I built / am building" rather than "look at this long planned list"; internal docs (PROGRESS, README) still carry the honest trail of what's queued and why. All three items remain trackable; they're just not advertised on the site as unshipped promises.
 - **2026-11-09** — **Phase 2 reframed as two parallel experiments**, not a single "VADER-replacement" narrative. Experiment A (time regime generalisation) controls for sentiment method and varies time window using the 2022 Twitter dataset I already have on disk. Experiment B (live 2026 Reddit) is framed as a separate research question rather than a direct continuation, because the Twitter→Reddit source switch is a confound that L2 alone cleanly controls for. Writes up on the homepage and in the README.

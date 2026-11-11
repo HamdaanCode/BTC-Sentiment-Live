@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import re
 import sys
 from datetime import date, datetime, timezone
@@ -37,6 +38,7 @@ COLUMNS = [
     "posts_scored",
     "posts_with_selftext",
     "avg_compound",
+    "weighted_compound",
     "avg_pos",
     "avg_neu",
     "avg_neg",
@@ -45,6 +47,13 @@ COLUMNS = [
     "neg_count",
     "top_post_title",
 ]
+
+# L5 closure: Reddit's RSS endpoint doesn't expose raw vote counts, so we weight
+# by rank in the top-of-day listing (Reddit's own score-based ordering).
+# weight(rank_1-indexed) = log(1 + POST_LIMIT - rank)  →  top ≈ 3.26, bottom ≈ 0.69,
+# giving a ~4.7x ratio between most- and least-upvoted posts.
+def _rank_weight(rank_zero_indexed: int, limit: int = POST_LIMIT) -> float:
+    return math.log(1 + (limit - rank_zero_indexed))
 
 # Reddit's RSS content is HTML inside a wrapper table. The real selftext
 # (when present) sits inside the <!-- SC_OFF --> … <!-- SC_ON --> markers,
@@ -85,11 +94,13 @@ def score_posts(posts: list[dict], analyzer: SentimentIntensityAnalyzer) -> dict
     pos_scores: list[float] = []
     neu_scores: list[float] = []
     neg_scores: list[float] = []
+    weighted_num = 0.0
+    weighted_den = 0.0
     pos_count = neu_count = neg_count = 0
     selftext_count = 0
     top_title = posts[0]["title"] if posts else ""
 
-    for post in posts:
+    for rank, post in enumerate(posts):
         title = post["title"]
         selftext = post["selftext"]
         text = f"{title}\n\n{selftext}" if selftext else title
@@ -103,6 +114,10 @@ def score_posts(posts: list[dict], analyzer: SentimentIntensityAnalyzer) -> dict
         pos_scores.append(scores["pos"])
         neu_scores.append(scores["neu"])
         neg_scores.append(scores["neg"])
+        # L5: weight each post's compound by its log-rank in the top-of-day listing.
+        weight = _rank_weight(rank)
+        weighted_num += compound * weight
+        weighted_den += weight
         # VADER author-recommended thresholds for discrete classification.
         if compound >= 0.05:
             pos_count += 1
@@ -114,10 +129,13 @@ def score_posts(posts: list[dict], analyzer: SentimentIntensityAnalyzer) -> dict
     def avg(xs: list[float]) -> float:
         return round(sum(xs) / len(xs), 4) if xs else 0.0
 
+    weighted_compound = round(weighted_num / weighted_den, 4) if weighted_den else 0.0
+
     return {
         "posts_scored": len(compound_scores),
         "posts_with_selftext": selftext_count,
         "avg_compound": avg(compound_scores),
+        "weighted_compound": weighted_compound,
         "avg_pos": avg(pos_scores),
         "avg_neu": avg(neu_scores),
         "avg_neg": avg(neg_scores),
@@ -155,16 +173,31 @@ def main() -> int:
     new_row = pd.DataFrame([row])
     combined = new_row if existing.empty else pd.concat([existing, new_row], ignore_index=True)
     combined = combined.sort_values("date").reset_index(drop=True)
+    # Canonicalise column order (new columns like weighted_compound get appended
+    # when first introduced; this keeps the CSV header stable across runs).
+    for col in COLUMNS:
+        if col not in combined.columns:
+            combined[col] = pd.NA
+    combined = combined[COLUMNS]
     combined.to_csv(CSV_PATH, index=False)
 
     latest = combined.iloc[-1]
-    recent = combined.tail(30).to_dict(orient="records")
+    # NaN is valid in-memory but invalid JSON. Convert to None so historical
+    # rows (e.g. pre-L5 rows missing weighted_compound) serialise cleanly.
+    recent = (
+        combined.tail(30)
+        .astype(object)
+        .where(combined.tail(30).notna(), None)
+        .to_dict(orient="records")
+    )
     JSON_PATH.write_text(json.dumps({
         "date": latest["date"],
         "subreddit": latest["subreddit"],
         "posts_scored": int(latest["posts_scored"]),
         "posts_with_selftext": int(latest["posts_with_selftext"]),
         "avg_compound": float(latest["avg_compound"]),
+        "weighted_compound": float(latest["weighted_compound"]),
+        "weight_scheme": "log-rank",
         "pos_count": int(latest["pos_count"]),
         "neu_count": int(latest["neu_count"]),
         "neg_count": int(latest["neg_count"]),
@@ -179,6 +212,7 @@ def main() -> int:
         f"{aggregates['posts_scored']} posts "
         f"({aggregates['posts_with_selftext']} with selftext), "
         f"avg_compound={aggregates['avg_compound']:.4f}, "
+        f"weighted_compound={aggregates['weighted_compound']:.4f}, "
         f"pos/neu/neg = {aggregates['pos_count']}/{aggregates['neu_count']}/{aggregates['neg_count']}"
     )
     return 0
