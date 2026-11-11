@@ -1,15 +1,15 @@
 {
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "subreddit": "Bitcoin",
-  "posts_scored": 23,
-  "posts_with_selftext": 16,
-  "avg_compound": 0.1532,
-  "pos_count": 9,
-  "neu_count": 7,
+  "posts_scored": 25,
+  "posts_with_selftext": 20,
+  "avg_compound": 0.1245,
+  "pos_count": 10,
+  "neu_count": 8,
   "neg_count": 7,
-  "top_post_title": "My dad just old me he might have 500 Bitcoin somewhere on an old laptop he lost, I think I need therapy.",
-  "rows_total": 2,
-  "generated_at": "2026-11-10T21:18:39+00:00",
+  "top_post_title": "Told my kid I may have 500 BTC",
+  "rows_total": 3,
+  "generated_at": "2026-11-11T06:06:43+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -38,6 +38,20 @@
       "neu_count": 7,
       "neg_count": 7,
       "top_post_title": "My dad just old me he might have 500 Bitcoin somewhere on an old laptop he lost, I think I need therapy."
+    },
+    {
+      "date": "2026-11-11",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 20,
+      "avg_compound": 0.1245,
+      "avg_pos": 0.0648,
+      "avg_neu": 0.8961,
+      "avg_neg": 0.0391,
+      "pos_count": 10,
+      "neu_count": 8,
+      "neg_count": 7,
+      "top_post_title": "Told my kid I may have 500 BTC"
     }
   ]
 }
