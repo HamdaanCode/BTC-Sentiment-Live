@@ -197,7 +197,28 @@ export default function Home() {
           <Metric
             label="Dir. accuracy"
             value="34.6%"
-            caption="below 50% → L4 confirmed"
+            caption="below 50%"
+          />
+        </div>
+
+        <div className="mt-12 mb-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            Experiment A results · H1 2022 bear window (seed=42)
+          </h3>
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            Model B2 retrained on 6 months (Jan–Jun 2022) covering the full
+            bear-market setup through Terra/Luna and 3AC. 7.3M tweets scored,
+            181 days, 54-day test set (2x the dissertation&apos;s original).
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Metric label="R²" value="0.018" caption="Model B2 · bear regime" />
+          <Metric label="MAE" value="$3,670" caption="Model B2 · test set" />
+          <Metric label="MAPE" value="15.7%" caption="Model B2" />
+          <Metric
+            label="Dir. accuracy"
+            value="60.4%"
+            caption="above random"
           />
         </div>
 
@@ -212,9 +233,9 @@ export default function Home() {
         <ul className="space-y-3">
           <LimitationRow
             id="L2"
-            status="planned"
+            status="done"
             title="Only a 91-day window (Sept–Nov 2021)"
-            deliverable="Extend the training set to include the 2022 bear market and the 2024 post-ETF recovery, so the model sees multiple regimes."
+            deliverable="Closed. Model B2 retrained on 6 months (H1 2022: Jan–Jun), 54-day test set covering Terra/Luna + 3AC. R² = 0.018 (positive but far below the 2021 baseline&apos;s 0.77), MAE $3,670, directional accuracy 60.4%. The pipeline generalises weakly on magnitude under regime change but retains directional signal above random — exactly what L2 was designed to surface."
           />
           <LimitationRow
             id="L3"
@@ -239,7 +260,7 @@ export default function Home() {
           <StatusRow status="done" label="Environment: pyenv + Python 3.12 + reproducible .venv" />
           <StatusRow status="done" label="Training pipeline reproduces the 2021 baseline end-to-end" />
           <StatusRow status="done" label="Daily ingest cron (BTC price + r/Bitcoin sentiment)" />
-          <StatusRow status="active" label="L2 · 2022 bear market retrain (VADER + crypto lexicon)" />
+          <StatusRow status="done" label="L2 · 2022 bear market retrain (VADER + crypto lexicon)" />
         </ul>
       </section>
     </main>

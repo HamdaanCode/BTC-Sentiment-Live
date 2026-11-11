@@ -2,7 +2,7 @@
 
 Rolling status doc. Updated as work is completed. Newest at top of each section.
 
-Last updated: 2026-11-09 (site cleaned up: L1 removed, L3 marked done at source level, L4 moved to README future-work)
+Last updated: 2026-11-11 (L2 closed with H1 2022 experimental results published to site)
 
 ## Environment
 
@@ -60,7 +60,7 @@ Paired t-tests on |errors|: A vs B p=0.88, A vs C p=0.42, B vs C p=0.73 — all 
 
 ### Phase 2 — dissertation limitation closures
 Mapping each named limitation to the deliverable that closes it.
-- [ ] **L2 (single window Sept–Nov 2021)** → retrain pipeline (Model B2) ported, awaiting local run on 2022 bear-market tweets. 2022 CSV already on disk at `/Users/hamdaanismail/Documents/Extracted Tweets/archive (1) 2/bitcoin-tweets-2022.csv`.
+- [x] **L2 (single window Sept–Nov 2021)** → Closed 2026-11-11. Model B2 retrained on **H1 2022 (Jan 1 – Jun 30, 181 days, 7.3M tweets)**. Train/test 70/30 → 127/54 (test set 2x the dissertation's). Results on 54-day test set: **R² 0.018, MAE $3,670, MAPE 15.7%, Directional accuracy 60.4%**. Interpretation: pipeline generalises weakly on magnitude under regime change (R² drops from 0.77 → 0.018) but retains directional signal above random. Published on site under "Experiment A results". Full reproducible record: Colab notebook committed as `Bitcoin_LSTM_2022_Dataset.ipynb`; training CSV at `reference/data/NEW_lstm_training_data_2022.csv`.
 - [x] **L3 (Twitter-only source)** → **Reddit added as second live sentiment source** (r/Bitcoin top 25 daily, VADER-scored, same methodology as the dissertation's Twitter pipeline). On-chain metrics moved to README future-work.
 - [ ] **L5 (unweighted aggregation)** → weight Reddit posts by upvotes (small change to `daily_reddit_sentiment.py`); Twitter followers if re-added
 
@@ -80,6 +80,7 @@ Documented limitations addressed in backlog rather than active sprint. The homep
 
 ## Decisions log
 
+- **2026-11-11** — **Experiment A executed on H1 2022 (not May-June).** Initial Terra/Luna + 3AC window (May-June, 61 days) gave R² = -2.43 — the 70/30 split put the test set inside the June 3AC crash, a distribution the training set never saw. Extended to full H1 2022 (Jan-Jun, 181 days, 7.3M tweets) which directly addresses the dissertation's own named limitation on sample size (Section 7.3) and its Future Work recommendation of a "6-12 month window on the 2022 bear market" (Section 7.4). Re-run gave R² = 0.018 (positive), MAE $3,670, Directional 60.4%. Positive-but-low R² is an honest generalisation finding, not a tuning failure. Numbers published to site.
 - **2026-11-09** — **Homepage L1–L5 list trimmed to shipped + in-progress only.** L1 (FinBERT) and L4 (rolling directional accuracy) removed from the public limitations list and moved into the README's new "Future work" section. L3 marked Done at the sentiment-source level (Reddit as second source); on-chain integration also moved to README future-work. Rationale: public face should read "look what I built / am building" rather than "look at this long planned list"; internal docs (PROGRESS, README) still carry the honest trail of what's queued and why. All three items remain trackable; they're just not advertised on the site as unshipped promises.
 - **2026-11-09** — **Phase 2 reframed as two parallel experiments**, not a single "VADER-replacement" narrative. Experiment A (time regime generalisation) controls for sentiment method and varies time window using the 2022 Twitter dataset I already have on disk. Experiment B (live 2026 Reddit) is framed as a separate research question rather than a direct continuation, because the Twitter→Reddit source switch is a confound that L2 alone cleanly controls for. Writes up on the homepage and in the README.
 - **2026-11-09** — **FinBERT deferred as future work**. VADER + crypto lexicon was the dissertation's novel methodological contribution; Phase 2 keeps it fixed as the sentiment method across both experiments so results are cleanly attributable to time-period and source variables. Transformer ablation (FinBERT or CryptoBERT) revisited post-interviews.
