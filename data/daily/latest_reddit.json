@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-11",
+  "date": "2026-11-12",
   "subreddit": "Bitcoin",
-  "posts_scored": 25,
-  "posts_with_selftext": 21,
-  "avg_compound": 0.0945,
-  "weighted_compound": 0.0419,
+  "posts_scored": 16,
+  "posts_with_selftext": 9,
+  "avg_compound": 0.1277,
+  "weighted_compound": 0.145,
   "weight_scheme": "log-rank",
-  "pos_count": 12,
-  "neu_count": 6,
-  "neg_count": 7,
-  "top_post_title": "Told my kid I may have 500 BTC",
-  "rows_total": 3,
-  "generated_at": "2026-11-11T15:22:18+00:00",
+  "pos_count": 9,
+  "neu_count": 4,
+  "neg_count": 3,
+  "top_post_title": "In 2017, countless cryptocurrencies were marketed as \"better Bitcoin.\" Here's how that worked out for them:",
+  "rows_total": 4,
+  "generated_at": "2026-11-12T07:05:07+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -57,6 +57,21 @@
       "neu_count": 6,
       "neg_count": 7,
       "top_post_title": "Told my kid I may have 500 BTC"
+    },
+    {
+      "date": "2026-11-12",
+      "subreddit": "Bitcoin",
+      "posts_scored": 16,
+      "posts_with_selftext": 9,
+      "avg_compound": 0.1277,
+      "weighted_compound": 0.145,
+      "avg_pos": 0.1108,
+      "avg_neu": 0.8587,
+      "avg_neg": 0.0305,
+      "pos_count": 9,
+      "neu_count": 4,
+      "neg_count": 3,
+      "top_post_title": "In 2017, countless cryptocurrencies were marketed as \"better Bitcoin.\" Here's how that worked out for them:"
     }
   ]
 }
