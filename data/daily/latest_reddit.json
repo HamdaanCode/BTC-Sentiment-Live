@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-12",
+  "date": "2026-11-13",
   "subreddit": "Bitcoin",
-  "posts_scored": 16,
-  "posts_with_selftext": 9,
-  "avg_compound": 0.1277,
-  "weighted_compound": 0.145,
+  "posts_scored": 25,
+  "posts_with_selftext": 15,
+  "avg_compound": 0.1839,
+  "weighted_compound": 0.1748,
   "weight_scheme": "log-rank",
-  "pos_count": 9,
-  "neu_count": 4,
-  "neg_count": 3,
-  "top_post_title": "In 2017, countless cryptocurrencies were marketed as \"better Bitcoin.\" Here's how that worked out for them:",
-  "rows_total": 4,
-  "generated_at": "2026-11-12T07:05:07+00:00",
+  "pos_count": 11,
+  "neu_count": 9,
+  "neg_count": 5,
+  "top_post_title": "Buy the dip\ud83e\udd2b",
+  "rows_total": 5,
+  "generated_at": "2026-11-13T06:35:41+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -72,6 +72,21 @@
       "neu_count": 4,
       "neg_count": 3,
       "top_post_title": "In 2017, countless cryptocurrencies were marketed as \"better Bitcoin.\" Here's how that worked out for them:"
+    },
+    {
+      "date": "2026-11-13",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 15,
+      "avg_compound": 0.1839,
+      "weighted_compound": 0.1748,
+      "avg_pos": 0.0877,
+      "avg_neu": 0.8483,
+      "avg_neg": 0.064,
+      "pos_count": 11,
+      "neu_count": 9,
+      "neg_count": 5,
+      "top_post_title": "Buy the dip\ud83e\udd2b"
     }
   ]
 }
