@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-13",
+  "date": "2026-11-14",
   "subreddit": "Bitcoin",
   "posts_scored": 25,
-  "posts_with_selftext": 15,
-  "avg_compound": 0.1839,
-  "weighted_compound": 0.1748,
+  "posts_with_selftext": 16,
+  "avg_compound": 0.0448,
+  "weighted_compound": 0.0316,
   "weight_scheme": "log-rank",
-  "pos_count": 11,
-  "neu_count": 9,
+  "pos_count": 12,
+  "neu_count": 8,
   "neg_count": 5,
-  "top_post_title": "Buy the dip\ud83e\udd2b",
-  "rows_total": 5,
-  "generated_at": "2026-11-13T06:35:41+00:00",
+  "top_post_title": "It's over. We're cooked.",
+  "rows_total": 6,
+  "generated_at": "2026-11-14T06:13:07+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -87,6 +87,21 @@
       "neu_count": 9,
       "neg_count": 5,
       "top_post_title": "Buy the dip\ud83e\udd2b"
+    },
+    {
+      "date": "2026-11-14",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 16,
+      "avg_compound": 0.0448,
+      "weighted_compound": 0.0316,
+      "avg_pos": 0.0923,
+      "avg_neu": 0.8404,
+      "avg_neg": 0.0671,
+      "pos_count": 12,
+      "neu_count": 8,
+      "neg_count": 5,
+      "top_post_title": "It's over. We're cooked."
     }
   ]
 }
