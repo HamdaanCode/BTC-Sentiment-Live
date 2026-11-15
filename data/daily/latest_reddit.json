@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "subreddit": "Bitcoin",
   "posts_scored": 25,
-  "posts_with_selftext": 16,
-  "avg_compound": 0.0448,
-  "weighted_compound": 0.0316,
+  "posts_with_selftext": 12,
+  "avg_compound": 0.0318,
+  "weighted_compound": 0.0208,
   "weight_scheme": "log-rank",
-  "pos_count": 12,
-  "neu_count": 8,
-  "neg_count": 5,
-  "top_post_title": "It's over. We're cooked.",
-  "rows_total": 6,
-  "generated_at": "2026-11-14T06:13:07+00:00",
+  "pos_count": 6,
+  "neu_count": 13,
+  "neg_count": 6,
+  "top_post_title": "Everyone chill",
+  "rows_total": 7,
+  "generated_at": "2026-11-15T06:20:48+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -102,6 +102,21 @@
       "neu_count": 8,
       "neg_count": 5,
       "top_post_title": "It's over. We're cooked."
+    },
+    {
+      "date": "2026-11-15",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 12,
+      "avg_compound": 0.0318,
+      "weighted_compound": 0.0208,
+      "avg_pos": 0.0723,
+      "avg_neu": 0.8732,
+      "avg_neg": 0.0545,
+      "pos_count": 6,
+      "neu_count": 13,
+      "neg_count": 6,
+      "top_post_title": "Everyone chill"
     }
   ]
 }
