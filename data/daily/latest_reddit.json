@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-15",
+  "date": "2026-11-16",
   "subreddit": "Bitcoin",
   "posts_scored": 25,
-  "posts_with_selftext": 12,
-  "avg_compound": 0.0318,
-  "weighted_compound": 0.0208,
+  "posts_with_selftext": 20,
+  "avg_compound": 0.1023,
+  "weighted_compound": 0.1143,
   "weight_scheme": "log-rank",
-  "pos_count": 6,
-  "neu_count": 13,
-  "neg_count": 6,
-  "top_post_title": "Everyone chill",
-  "rows_total": 7,
-  "generated_at": "2026-11-15T06:20:48+00:00",
+  "pos_count": 13,
+  "neu_count": 3,
+  "neg_count": 9,
+  "top_post_title": "Got my quarter of a bitcoin finally",
+  "rows_total": 8,
+  "generated_at": "2026-11-16T06:19:54+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -117,6 +117,21 @@
       "neu_count": 13,
       "neg_count": 6,
       "top_post_title": "Everyone chill"
+    },
+    {
+      "date": "2026-11-16",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 20,
+      "avg_compound": 0.1023,
+      "weighted_compound": 0.1143,
+      "avg_pos": 0.1392,
+      "avg_neu": 0.7916,
+      "avg_neg": 0.0693,
+      "pos_count": 13,
+      "neu_count": 3,
+      "neg_count": 9,
+      "top_post_title": "Got my quarter of a bitcoin finally"
     }
   ]
 }
