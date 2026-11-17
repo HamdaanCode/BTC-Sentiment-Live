@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "subreddit": "Bitcoin",
   "posts_scored": 25,
-  "posts_with_selftext": 20,
-  "avg_compound": 0.1023,
-  "weighted_compound": 0.1143,
+  "posts_with_selftext": 14,
+  "avg_compound": 0.2226,
+  "weighted_compound": 0.1996,
   "weight_scheme": "log-rank",
-  "pos_count": 13,
-  "neu_count": 3,
-  "neg_count": 9,
-  "top_post_title": "Got my quarter of a bitcoin finally",
-  "rows_total": 8,
-  "generated_at": "2026-11-16T06:19:54+00:00",
+  "pos_count": 12,
+  "neu_count": 9,
+  "neg_count": 4,
+  "top_post_title": "Checking on the guys I told to buy bitcoin at $125k",
+  "rows_total": 9,
+  "generated_at": "2026-11-17T07:49:31+00:00",
   "recent": [
     {
       "date": "2026-11-09",
@@ -132,6 +132,21 @@
       "neu_count": 3,
       "neg_count": 9,
       "top_post_title": "Got my quarter of a bitcoin finally"
+    },
+    {
+      "date": "2026-11-17",
+      "subreddit": "Bitcoin",
+      "posts_scored": 25,
+      "posts_with_selftext": 14,
+      "avg_compound": 0.2226,
+      "weighted_compound": 0.1996,
+      "avg_pos": 0.0972,
+      "avg_neu": 0.8469,
+      "avg_neg": 0.0559,
+      "pos_count": 12,
+      "neu_count": 9,
+      "neg_count": 4,
+      "top_post_title": "Checking on the guys I told to buy bitcoin at $125k"
     }
   ]
 }
